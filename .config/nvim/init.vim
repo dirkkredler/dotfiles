@@ -44,12 +44,14 @@ set wrap linebreak nolist
 set formatoptions -=t
 set inccommand     =nosplit
 
-set nobackup
-set nowritebackup
 set undofile
-set undodir=~/.vim/undodir
-set noswapfile
-set backupdir    -=.
+set undodir       =~/.config/nvim/tmp//
+set swapfile
+set directory     =~/.config/nvim/tmp//
+set writebackup
+set nobackup
+set backupcopy    =auto  
+set backupdir     =~/.config/nvim/tmp//
 set shada         ='100
 
 set shortmess     =Ic
@@ -84,6 +86,8 @@ set path            =.,,**
 set background=dark
 set termguicolors
 
+set completeopt=menuone,noinsert,noselect
+
 runtime macros/matchit.vim
 
 let &t_SI = "\e[5 q"
@@ -95,12 +99,14 @@ set guicursor=n-v-c:block,i-ci-ve:hor20blinkon250,r-cr:ver20blinkon250,o:hor50
 nnoremap Y y$
 nnoremap n nzzzv
 nnoremap N Nzzzv
+nnoremap <silent> gx :execute 'silent! !xdg-open ' . shellescape(expand('<cWORD>'), 1)<CR>
 
 let mapleader   ="\<Space>"
 au VimLeave * set guicursor=a:hor20-blinkon1
 au filetype php :iabbrev dst declare(strict_types=1);
 
 call plug#begin('~/.config/nvim/plugins') " https://github.com/junegunn/vim-plug
+Plug 'mbbill/undotree'
 Plug 'junegunn/vim-easy-align'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -110,14 +116,43 @@ Plug 'sheerun/vim-polyglot'
 Plug 'alvan/vim-php-manual', {'for': 'php'}
 Plug 'preservim/nerdcommenter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
+Plug 'phpactor/phpactor', {'for': 'php', 'tag': '*', 'do': 'composer install --no-dev -o'}
 Plug 'honza/vim-snippets'
 Plug 'FooSoft/vim-argwrap'
 Plug 'mattn/emmet-vim'
 Plug 'majutsushi/tagbar'
-Plug 'vim-vdebug/vdebug'
 Plug 'dense-analysis/ale'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+Plug 'tpope/vim-fugitive'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'BurntSushi/ripgrep'
+Plug 'sharkdp/fd'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+Plug 'nvim-telescope/telescope.nvim'
+" Collection of common configurations for the Nvim LSP client
+Plug 'neovim/nvim-lspconfig'
+
+" Completion framework
+Plug 'hrsh7th/nvim-cmp'
+
+" LSP completion source for nvim-cmp
+Plug 'hrsh7th/cmp-nvim-lsp'
+
+" Snippet completion source for nvim-cmp
+Plug 'hrsh7th/cmp-vsnip'
+
+" Other usefull completion sources
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-buffer'
+
+" See hrsh7th's other plugins for more completion sources!
+
+" To enable more of the features of rust-analyzer, such as inlay hints and more!
+Plug 'simrat39/rust-tools.nvim'
+
+" Snippet engine
+Plug 'hrsh7th/vim-vsnip'
 call plug#end()
 
 let g:airline_theme                       ='gruvbox'
@@ -130,6 +165,9 @@ let g:ultisnips_php_scalar_types          =1
 
 map <leader>w :ArgWrap<CR>
 
+" Unbind some useless/annoying default key bindings.
+nmap Q <Nop> " 'Q' in normal mode enters Ex mode. You almost never want this.
+
 highlight ExtraWhitespace guibg           =#073642
 nnoremap <Leader>wa :match ExtraWhitespace /\s\+$/<CR>
 nnoremap <Leader>wo :match<CR>:nohlsearch<CR>
@@ -137,20 +175,26 @@ map <Leader>rw :%s/\s\+$//<CR>
 
 tnoremap <Esc>  <C-\><C-n>
 
-let g:fzf_action = {
-  \ 'ctrl-t': 'tab split',
-  \ 'ctrl-s': 'split',
-  \ 'ctrl-v': 'vsplit'
-  \}
-map <Leader>, :Files<CR>
-map <Leader>. :Rg<CR>
+" let g:fzf_action = {
+  " \ 'ctrl-t': 'tab split',
+  " \ 'ctrl-s': 'split',
+  " \ 'ctrl-v': 'vsplit'
+  " \}
+"map <Leader>, :Files<CR>
+"map <Leader>. :Rg<CR>
+
+" Using Lua functions
+nnoremap <leader>, <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <leader>. <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
+nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
 
 nnoremap <silent> <CR>   :nohlsearch<CR>
 
-inoremap (<tab> ()
-inoremap [<tab> []
-inoremap {<tab> {}
-inoremap {<CR> {<CR>}<ESC>O
+" inoremap (<tab> ()
+" inoremap [<tab> []
+" inoremap {<tab> {}
+" inoremap {<CR> {<CR>}<ESC>O
 
 map <Leader>1 :CocDisable<CR>:ALEDisable<CR>
 map <Leader>0 :CocEnable<CR>:ALEEnable<CR>
@@ -165,36 +209,15 @@ nmap <Leader>- :TagbarToggle<CR>
 
 let g:NERDSpaceDelims = 1
 
-let g:vdebug_options                    ={}
-let g:vdebug_options.ide_key            ='vim'
-let g:vdebug_options.break_on_open      =1
-let g:vdebug_options.port               =9000
-let g:vdebug_options.host               ='127.0.0.1'
-let g:vdebug_options.watch_window_style ='compact'
-let g:vdebug_options.server             =''
-
-let g:vdebug_features                   ={}
-let g:vdebug_features.max_children      =128
-
-let g:vdebug_keymap = {
-\    "run" : "<F5>",
-\    "run_to_cursor" : "<F9>",
-\    "step_over" : "<F2>",
-\    "step_into" : "<F3>",
-\    "step_out" : "<F4>",
-\    "close" : "<F6>",
-\    "detach" : "<F7>",
-\    "set_breakpoint" : "<F10>",
-\    "get_context" : "<F11>",
-\    "eval_under_cursor" : "<F12>",
-\    "eval_visual" : "<Leader>e",
-\}
-
-let g:phpactorBranch = "develop"
+"let g:phpactorBranch = "develop"
 let g:phpactorPhpBin = "/usr/bin/php"
 let g:phpactorInputListStrategy = 'phpactor#input#list#fzf'
 let g:phpactorQuickfixStrategy = 'phpactor#quickfix#fzf'
+lua << EOF
+require'lspconfig'.phpactor.setup{}
+EOF
 
+autocmd FileType markdown let b:coc_pairs_disabled = ['`']
 autocmd FileType php set iskeyword+=$
 nmap <Leader><Space> :PhpactorContextMenu<CR>
 
@@ -234,17 +257,35 @@ command! MakeTags !ctags -R --exclude=.git  --exclude=bin --exclude=var --exclud
       " \ <sid>check_back_space() ? "\<tab>" :
       " \ coc#refresh()
 
+" inoremap <silent><expr> <TAB>
+"       \ pumvisible() ? coc#_select_confirm() :
+"       \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+"       \ <SID>check_back_space() ? "\<TAB>" :
+"       \ coc#refresh()
+
+" inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+"inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+"inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<TAB>"
+
+
+inoremap <silent><expr> <C-x><C-z> coc#pum#visible() ? coc#pum#stop() : "\<C-x>\<C-z>"
 inoremap <silent><expr> <TAB>
-      \ pumvisible() ? coc#_select_confirm() :
-      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
+    \ coc#pum#visible() ? coc#pum#next(1):
+    \ CheckBackspace() ? "\<Tab>" :
+    \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+inoremap <silent><expr> <c-space> coc#refresh()
 
 let g:coc_snippet_next = '<tab>'
 
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-function! s:check_back_space() abort
+" function! s:check_back_space() abort
+"   let col = col('.') - 1
+"   return !col || getline('.')[col - 1]  =~# '\s'
+" endfunction
+
+function! CheckBackspace() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
@@ -254,8 +295,9 @@ inoremap <silent><expr> <c-space> coc#refresh()
 
 " Make <CR> auto-select the first completion item and notify coc.nvim to
 " format on enter, <cr> could be remapped by other vim plugin
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+" inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+"                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
 
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
@@ -390,3 +432,110 @@ imap <C-j> <Plug>(coc-snippets-expand-jump)
 
 " Use <leader>x for convert visual selected code to snippet
 xmap <leader>x  <Plug>(coc-convert-snippet)
+
+
+lua <<EOF
+local nvim_lsp = require'lspconfig'
+
+local opts = {
+    tools = { -- rust-tools options
+        autoSetHints = true,
+        inlay_hints = {
+            show_parameter_hints = true,
+            parameter_hints_prefix = "",
+            other_hints_prefix = "",
+        },
+    },
+
+    -- all the opts to send to nvim-lspconfig
+    -- these override the defaults set by rust-tools.nvim
+    -- see https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#rust_analyzer
+    server = {
+        -- on_attach is a callback called when the language server attachs to the buffer
+        -- on_attach = on_attach,
+        on_attach = function(_, bufnr)
+        -- Hover actions
+        vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
+        -- Code action groups
+        vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
+        end,
+        settings = {
+            -- to enable rust-analyzer settings visit:
+            -- https://github.com/rust-analyzer/rust-analyzer/blob/master/docs/user/generated_config.adoc
+            ["rust-analyzer"] = {
+                -- enable clippy on save
+                checkOnSave = {
+                    command = "clippy"
+                },
+            }
+        }
+    },
+}
+
+require('rust-tools').setup(opts)
+EOF
+
+" Setup Completion
+" See https://github.com/hrsh7th/nvim-cmp#basic-configuration
+lua <<EOF
+local cmp = require'cmp'
+cmp.setup({
+  -- Enable LSP snippets
+  snippet = {
+    expand = function(args)
+        vim.fn["vsnip#anonymous"](args.body)
+    end,
+  },
+  mapping = {
+    ['<C-p>'] = cmp.mapping.select_prev_item(),
+    ['<C-n>'] = cmp.mapping.select_next_item(),
+    -- Add tab support
+    ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+    ['<Tab>'] = cmp.mapping.select_next_item(),
+    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.close(),
+    ['<CR>'] = cmp.mapping.confirm({
+      behavior = cmp.ConfirmBehavior.Insert,
+      select = true,
+    })
+  },
+
+  -- Installed sources
+  sources = {
+    { name = 'nvim_lsp' },
+    { name = 'vsnip' },
+    { name = 'path' },
+    { name = 'buffer' },
+  },
+})
+EOF
+
+" Code navigation shortcuts
+nnoremap <silent> <c-[> <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
+nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
+nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+"nnoremap <silent> gd    <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> 2gd    <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> ga    <cmd>lua vim.lsp.buf.code_action()<CR>
+" Set updatetime for CursorHold
+" 300ms of no cursor movement to trigger CursorHold
+"set updatetime=300
+" Show diagnostic popup on cursor hold
+"autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
+
+" Goto previous/next diagnostic warning/error
+nnoremap <silent> g[ <cmd>lua vim.diagnostic.goto_prev()<CR>
+nnoremap <silent> g] <cmd>lua vim.diagnostic.goto_next()<CR>
+" have a fixed column for the diagnostics to appear in
+" this removes the jitter when warnings/errors flow in
+set signcolumn=yes
+
+
+nnoremap <F5> :UndotreeToggle<CR>
