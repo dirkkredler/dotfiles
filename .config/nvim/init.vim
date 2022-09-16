@@ -85,7 +85,6 @@ set sidescrolloff   =5
 
 set path            =.,,**
 
-
 set completeopt=menuone,noinsert,noselect
 
 runtime macros/matchit.vim
@@ -219,9 +218,16 @@ EOF
 
 autocmd FileType markdown let b:coc_pairs_disabled = ['`']
 autocmd FileType php set iskeyword+=$
-nmap <Leader><Space> :PhpactorContextMenu<CR>
-
+autocmd FileType php let b:coc_pairs_disabled = ['{']
 autocmd BufRead,BufNewFile * setlocal signcolumn=auto
+
+augroup templates
+    autocmd BufNewFile *.php 0r ~/.config/nvim/templates/skeleton.php
+    autocmd BufNewFile *.php :normal 5G
+    autocmd BufNewFile *.php :normal $
+augroup END
+
+nmap <Leader><Space> :PhpactorContextMenu<CR>
 
 let g:ale_sign_error = '>'
 let g:ale_sign_warning = '-'
