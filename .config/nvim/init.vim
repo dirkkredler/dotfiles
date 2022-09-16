@@ -102,7 +102,6 @@ nnoremap <silent> gx :execute 'silent! !xdg-open ' . shellescape(expand('<cWORD>
 
 let mapleader   ="\<Space>"
 au VimLeave * set guicursor=a:hor20-blinkon1
-au filetype php :iabbrev dst declare(strict_types=1);
 
 call plug#begin('~/.config/nvim/plugins') " https://github.com/junegunn/vim-plug
 Plug 'mbbill/undotree'
@@ -218,14 +217,13 @@ EOF
 
 autocmd FileType markdown let b:coc_pairs_disabled = ['`']
 autocmd FileType php set iskeyword+=$
-autocmd FileType php let b:coc_pairs_disabled = ['{']
 autocmd BufRead,BufNewFile * setlocal signcolumn=auto
 
 augroup templates
-    autocmd BufNewFile *.php 0r ~/.config/nvim/templates/skeleton.php
-    autocmd BufNewFile *.php :normal 5G
-    autocmd BufNewFile *.php :normal $
-augroup END
+    autocmd BufNewFile *.php silent! 0r ~/.config/nvim/templates/skeleton.php
+    autocmd BufNewFile *.php silent! :normal 5G
+    autocmd BufNewFile *.php silent! :normal $
+augroup end
 
 nmap <Leader><Space> :PhpactorContextMenu<CR>
 
