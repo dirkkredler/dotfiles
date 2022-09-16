@@ -1,4 +1,6 @@
 filetype plugin indent on
+set background=dark
+set termguicolors
 syntax on
 
 set autoindent
@@ -83,8 +85,6 @@ set sidescrolloff   =5
 
 set path            =.,,**
 
-set background=dark
-set termguicolors
 
 set completeopt=menuone,noinsert,noselect
 
