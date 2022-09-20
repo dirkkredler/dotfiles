@@ -223,6 +223,8 @@ augroup templates
     autocmd BufNewFile *.php silent! 0r ~/.config/nvim/templates/skeleton.php
     autocmd BufNewFile *.php silent! :normal 5G
     autocmd BufNewFile *.php silent! :normal $
+    autocmd BufNewFile *.js silent! 0r ~/.config/nvim/templates/skeleton.js
+    autocmd BufNewFile *.js silent! :normal 4G
 augroup end
 
 nmap <Leader><Space> :PhpactorContextMenu<CR>
