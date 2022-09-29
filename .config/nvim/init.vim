@@ -25,6 +25,7 @@ set showcmd
 set incsearch
 set hlsearch
 set ignorecase
+set infercase
 set smartcase
 
 set lazyredraw
@@ -110,7 +111,6 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'itchyny/lightline.vim'
 Plug 'gruvbox-community/gruvbox'
-Plug 'sheerun/vim-polyglot'
 Plug 'alvan/vim-php-manual', {'for': 'php'}
 Plug 'preservim/nerdcommenter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -123,7 +123,7 @@ Plug 'dense-analysis/ale'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 Plug 'tpope/vim-fugitive'
 Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'BurntSushi/ripgrep'
 Plug 'sharkdp/fd'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
@@ -545,3 +545,27 @@ set signcolumn=yes
 
 
 nnoremap <F5> :UndotreeToggle<CR>
+
+lua <<EOF
+  require"nvim-treesitter.highlight".set_custom_captures {
+    -- Highlight the @foo.bar capture group with the "Identifier" highlight group.
+    ["foo.bar"] = "Identifier",
+  }
+  require'nvim-treesitter.configs'.setup {
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      init_selection = "gnn",
+      node_incremental = "grn",
+      scope_incremental = "grc",
+      node_decremental = "grm",
+    },
+  },
+}
+  require'nvim-treesitter.configs'.setup {
+  indent = {
+    enable = true
+  }
+}
+
+EOF
