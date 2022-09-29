@@ -527,30 +527,27 @@ nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
 nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
 nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
 nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
-"nnoremap <silent> gd    <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> 2gd    <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> gd    <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> ga    <cmd>lua vim.lsp.buf.code_action()<CR>
 " Set updatetime for CursorHold
 " 300ms of no cursor movement to trigger CursorHold
 "set updatetime=300
 " Show diagnostic popup on cursor hold
-"autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
+autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
 
 " Goto previous/next diagnostic warning/error
+"
 nnoremap <silent> g[ <cmd>lua vim.diagnostic.goto_prev()<CR>
 nnoremap <silent> g] <cmd>lua vim.diagnostic.goto_next()<CR>
+
 " have a fixed column for the diagnostics to appear in
 " this removes the jitter when warnings/errors flow in
-set signcolumn=yes
 
+set signcolumn=yes
 
 nnoremap <F5> :UndotreeToggle<CR>
 
 lua <<EOF
-  require"nvim-treesitter.highlight".set_custom_captures {
-    -- Highlight the @foo.bar capture group with the "Identifier" highlight group.
-    ["foo.bar"] = "Identifier",
-  }
   require'nvim-treesitter.configs'.setup {
   incremental_selection = {
     enable = true,
