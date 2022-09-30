@@ -4,6 +4,7 @@ set termguicolors
 syntax on
 
 set autoindent
+set smartindent
 set expandtab
 set tabstop       =4
 set softtabstop   =4
@@ -549,20 +550,10 @@ nnoremap <F5> :UndotreeToggle<CR>
 
 lua <<EOF
   require'nvim-treesitter.configs'.setup {
-  incremental_selection = {
-    enable = true,
-    keymaps = {
-      init_selection = "gnn",
-      node_incremental = "grn",
-      scope_incremental = "grc",
-      node_decremental = "grm",
-    },
-  },
-}
-  require'nvim-treesitter.configs'.setup {
-  indent = {
-    enable = true
+    -- Modules and its options go here
+    highlight = { enable = true },
+    incremental_selection = { enable = true },
+    textobjects = { enable = true },
+    indent = { enable = true },
   }
-}
-
 EOF
