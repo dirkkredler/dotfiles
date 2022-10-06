@@ -106,3 +106,7 @@ export GROUP_ID=$(id -g)
 HOME=${HOME:-'/home/dirk'}
 export PATH="$HOME/"'.platformsh/bin':"$PATH"
 if [ -f "$HOME/"'.platformsh/shell-config.rc' ]; then . "$HOME/"'.platformsh/shell-config.rc'; fi # END SNIPPET
+
+if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
+    tmux attach -t daily || tmux new -s daily
+fi
