@@ -10,7 +10,8 @@
     "coc-docker": ">=0.5.0",
     "coc-yaml": ">=1.8.0",
     "coc-cspell-dicts": ">=1.0.2",
-    "coc-phpactor": ">=1.0.3"
+    "coc-phpactor": ">=1.0.3",
+    "coc-snippets": ">=3.1.2"
   },
   "disabled": [],
   "locked": [],

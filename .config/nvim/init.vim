@@ -1,3 +1,5 @@
+" spell-checker: disable
+"
 filetype plugin indent on
 set background=dark
 set termguicolors
@@ -89,6 +91,9 @@ set path            =.,,**
 
 set completeopt=menuone,noinsert,noselect
 
+set nospell
+set spelllang=en,de
+
 runtime macros/matchit.vim
 
 let &t_SI = "\e[5 q"
@@ -102,6 +107,7 @@ nnoremap n nzzzv
 nnoremap N Nzzzv
 nnoremap <silent> gx :execute 'silent! !xdg-open ' . shellescape(expand('<cWORD>'), 1)<CR>
 
+
 let mapleader   ="\<Space>"
 au VimLeave * set guicursor=a:hor20-blinkon1
 
@@ -111,56 +117,42 @@ Plug 'junegunn/vim-easy-align'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'itchyny/lightline.vim'
-Plug 'gruvbox-community/gruvbox'
+Plug 'shaunsingh/nord.nvim'
 Plug 'alvan/vim-php-manual', {'for': 'php'}
+Plug 'StanAngeloff/php.vim', {'for': 'php'}
 Plug 'preservim/nerdcommenter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'phpactor/phpactor', {'for': 'php', 'tag': '*', 'do': 'composer install --no-dev -o'}
-Plug 'honza/vim-snippets'
 Plug 'FooSoft/vim-argwrap'
 Plug 'mattn/emmet-vim'
 Plug 'majutsushi/tagbar'
 Plug 'dense-analysis/ale'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
-Plug 'tpope/vim-fugitive'
-Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'BurntSushi/ripgrep'
-Plug 'sharkdp/fd'
+Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'nvim-telescope/telescope.nvim'
-" Collection of common configurations for the Nvim LSP client
 Plug 'neovim/nvim-lspconfig'
-
-" Completion framework
-Plug 'hrsh7th/nvim-cmp'
-
-" LSP completion source for nvim-cmp
-Plug 'hrsh7th/cmp-nvim-lsp'
-
-" Snippet completion source for nvim-cmp
-Plug 'hrsh7th/cmp-vsnip'
-
-" Other usefull completion sources
-Plug 'hrsh7th/cmp-path'
-Plug 'hrsh7th/cmp-buffer'
-
-" See hrsh7th's other plugins for more completion sources!
-
-" To enable more of the features of rust-analyzer, such as inlay hints and more!
 Plug 'simrat39/rust-tools.nvim'
-
-" Snippet engine
-Plug 'hrsh7th/vim-vsnip'
+Plug 'neomake/neomake'
+Plug 'lumiliet/vim-twig'
+Plug 'honza/vim-snippets'
 call plug#end()
 
-let g:airline_theme                       ='gruvbox'
-let g:gruvbox_contrast_dark               ='hard'
-let g:gruvbox_invert_selection            ='0'
-colorscheme gruvbox
+let g:nord_contrast = v:true
+let g:nord_borders = v:false
+let g:nord_disable_background = v:false
+let g:nord_italic = v:false
+let g:nord_uniform_diff_background = v:true
+
+colorscheme nord
+
+let g:lightline = {
+        \ 'colorscheme': 'nord'
+        \ }
 
 let g:php_manual_online_search_shortcut   ='<leader>m'
-let g:ultisnips_php_scalar_types          =1
 
 map <leader>w :ArgWrap<CR>
 
@@ -181,6 +173,16 @@ tnoremap <Esc>  <C-\><C-n>
   " \}
 "map <Leader>, :Files<CR>
 "map <Leader>. :Rg<CR>
+
+" When writing a buffer (no delay).
+call neomake#configure#automake('w')
+" When writing a buffer (no delay), and on normal mode changes (after 750ms).
+" call neomake#configure#automake('nw', 750)
+" When reading a buffer (after 1s), and when writing (no delay).
+"call neomake#configure#automake('rw', 1000)
+" Full config: when writing or reading a buffer, and on changes in insert and
+" normal mode (after 500ms; no delay when writing).
+" call neomake#configure#automake('nrwi', 500)
 
 " Using Lua functions
 nnoremap <leader>, <cmd>lua require('telescope.builtin').find_files()<cr>
@@ -213,7 +215,13 @@ let g:phpactorPhpBin = "/usr/bin/php"
 let g:phpactorInputListStrategy = 'phpactor#input#list#fzf'
 let g:phpactorQuickfixStrategy = 'phpactor#quickfix#fzf'
 lua << EOF
-require'lspconfig'.phpactor.setup{}
+require'lspconfig'.phpactor.setup{
+    on_attach = on_attach,
+    init_options = {
+        ["language_server_phpstan.enabled"] = false,
+        ["language_server_psalm.enabled"] = true,
+    }
+}
 EOF
 
 autocmd FileType markdown let b:coc_pairs_disabled = ['`']
@@ -256,25 +264,6 @@ command! MakeTags !ctags -R --exclude=.git  --exclude=bin --exclude=var --exclud
 " help ins-completion reads also from tags file
 " ^n type var<ctrl>n
 
-" Use tab for trigger completion with characters ahead and navigate.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
-" inoremap <silent><expr> <tab>
-      " \ pumvisible() ? "\<c-n>" :
-      " \ <sid>check_back_space() ? "\<tab>" :
-      " \ coc#refresh()
-
-" inoremap <silent><expr> <TAB>
-"       \ pumvisible() ? coc#_select_confirm() :
-"       \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-"       \ <SID>check_back_space() ? "\<TAB>" :
-"       \ coc#refresh()
-
-" inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-"inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
-"inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<TAB>"
-
-
 inoremap <silent><expr> <C-x><C-z> coc#pum#visible() ? coc#pum#stop() : "\<C-x>\<C-z>"
 inoremap <silent><expr> <TAB>
     \ coc#pum#visible() ? coc#pum#next(1):
@@ -284,13 +273,6 @@ inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 inoremap <silent><expr> <c-space> coc#refresh()
 
 let g:coc_snippet_next = '<tab>'
-
-" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-" function! s:check_back_space() abort
-"   let col = col('.') - 1
-"   return !col || getline('.')[col - 1]  =~# '\s'
-" endfunction
 
 function! CheckBackspace() abort
   let col = col('.') - 1
@@ -484,40 +466,40 @@ EOF
 
 " Setup Completion
 " See https://github.com/hrsh7th/nvim-cmp#basic-configuration
-lua <<EOF
-local cmp = require'cmp'
-cmp.setup({
-  -- Enable LSP snippets
-  snippet = {
-    expand = function(args)
-        vim.fn["vsnip#anonymous"](args.body)
-    end,
-  },
-  mapping = {
-    ['<C-p>'] = cmp.mapping.select_prev_item(),
-    ['<C-n>'] = cmp.mapping.select_next_item(),
-    -- Add tab support
-    ['<S-Tab>'] = cmp.mapping.select_prev_item(),
-    ['<Tab>'] = cmp.mapping.select_next_item(),
-    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.close(),
-    ['<CR>'] = cmp.mapping.confirm({
-      behavior = cmp.ConfirmBehavior.Insert,
-      select = true,
-    })
-  },
-
-  -- Installed sources
-  sources = {
-    { name = 'nvim_lsp' },
-    { name = 'vsnip' },
-    { name = 'path' },
-    { name = 'buffer' },
-  },
-})
-EOF
+"lua <<EOF
+"local cmp = require'cmp'
+"cmp.setup({
+"  -- Enable LSP snippets
+"  snippet = {
+"    expand = function(args)
+"        vim.fn["vsnip#anonymous"](args.body)
+"    end,
+"  },
+"  mapping = {
+"    ['<C-p>'] = cmp.mapping.select_prev_item(),
+"    ['<C-n>'] = cmp.mapping.select_next_item(),
+"    -- Add tab support
+"    ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+"    ['<Tab>'] = cmp.mapping.select_next_item(),
+"    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+"    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+"    ['<C-Space>'] = cmp.mapping.complete(),
+"    ['<C-e>'] = cmp.mapping.close(),
+"    ['<CR>'] = cmp.mapping.confirm({
+"      behavior = cmp.ConfirmBehavior.Insert,
+"      select = true,
+"    })
+"  },
+"
+"  -- Installed sources
+"  sources = {
+"    { name = 'nvim_lsp' },
+"    { name = 'vsnip' },
+"    { name = 'path' },
+"    { name = 'buffer' },
+"  },
+"})
+"EOF
 
 " Code navigation shortcuts
 nnoremap <silent> <c-[> <cmd>lua vim.lsp.buf.definition()<CR>
@@ -543,7 +525,6 @@ nnoremap <silent> g] <cmd>lua vim.diagnostic.goto_next()<CR>
 
 " have a fixed column for the diagnostics to appear in
 " this removes the jitter when warnings/errors flow in
-
 set signcolumn=yes
 
 nnoremap <F5> :UndotreeToggle<CR>
@@ -557,3 +538,6 @@ lua <<EOF
     indent = { enable = true },
   }
 EOF
+
+vmap <leader>_ <Plug>(coc-codeaction-selected)
+nmap <leader>_ <Plug>(coc-codeaction-selected)
