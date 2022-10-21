@@ -117,10 +117,9 @@ Plug 'junegunn/vim-easy-align'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'itchyny/lightline.vim'
-"Plug 'gruvbox-community/gruvbox'
-"Plug 'arcticicestudio/nord-vim'
 Plug 'shaunsingh/nord.nvim'
 Plug 'alvan/vim-php-manual', {'for': 'php'}
+Plug 'StanAngeloff/php.vim', {'for': 'php'}
 Plug 'preservim/nerdcommenter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'phpactor/phpactor', {'for': 'php', 'tag': '*', 'do': 'composer install --no-dev -o'}
@@ -138,23 +137,20 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'simrat39/rust-tools.nvim'
 Plug 'neomake/neomake'
 Plug 'lumiliet/vim-twig'
+Plug 'honza/vim-snippets'
 call plug#end()
 
-"let g:airline_theme                       ='gruvbox'
-"let g:gruvbox_contrast_dark               ='hard'
-"let g:gruvbox_invert_selection            ='0'
-"colorscheme gruvbox
-" let g:airline_theme                       ='nord'
-" colorscheme nord
-" Example config in Vim-Script
 let g:nord_contrast = v:true
 let g:nord_borders = v:false
 let g:nord_disable_background = v:false
 let g:nord_italic = v:false
 let g:nord_uniform_diff_background = v:true
 
-" Load the colorscheme
 colorscheme nord
+
+let g:lightline = {
+        \ 'colorscheme': 'nord'
+        \ }
 
 let g:php_manual_online_search_shortcut   ='<leader>m'
 
@@ -219,7 +215,13 @@ let g:phpactorPhpBin = "/usr/bin/php"
 let g:phpactorInputListStrategy = 'phpactor#input#list#fzf'
 let g:phpactorQuickfixStrategy = 'phpactor#quickfix#fzf'
 lua << EOF
-require'lspconfig'.phpactor.setup{}
+require'lspconfig'.phpactor.setup{
+    on_attach = on_attach,
+    init_options = {
+        ["language_server_phpstan.enabled"] = false,
+        ["language_server_psalm.enabled"] = true,
+    }
+}
 EOF
 
 autocmd FileType markdown let b:coc_pairs_disabled = ['`']
@@ -523,7 +525,6 @@ nnoremap <silent> g] <cmd>lua vim.diagnostic.goto_next()<CR>
 
 " have a fixed column for the diagnostics to appear in
 " this removes the jitter when warnings/errors flow in
-
 set signcolumn=yes
 
 nnoremap <F5> :UndotreeToggle<CR>
@@ -538,5 +539,5 @@ lua <<EOF
   }
 EOF
 
-vmap <leader>a <Plug>(coc-codeaction-selected)
-nmap <leader>a <Plug>(coc-codeaction-selected)
+vmap <leader>_ <Plug>(coc-codeaction-selected)
+nmap <leader>_ <Plug>(coc-codeaction-selected)
