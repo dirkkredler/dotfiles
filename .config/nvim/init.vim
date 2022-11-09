@@ -1,5 +1,3 @@
-" spell-checker: disable
-"
 filetype plugin indent on
 set background=dark
 set termguicolors
@@ -91,7 +89,7 @@ set path            =.,,**
 
 set completeopt=menuone,noinsert,noselect
 
-set nospell
+set spell
 set spelllang=en,de
 
 runtime macros/matchit.vim
@@ -117,9 +115,11 @@ Plug 'junegunn/vim-easy-align'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'itchyny/lightline.vim'
-Plug 'shaunsingh/nord.nvim'
+"Plug 'shaunsingh/nord.nvim'
+Plug 'arcticicestudio/nord-vim'
 Plug 'alvan/vim-php-manual', {'for': 'php'}
 Plug 'StanAngeloff/php.vim', {'for': 'php'}
+Plug 'stephpy/vim-php-cs-fixer', {'for': 'php'}
 Plug 'preservim/nerdcommenter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'phpactor/phpactor', {'for': 'php', 'tag': '*', 'do': 'composer install --no-dev -o'}
@@ -140,6 +140,10 @@ Plug 'lumiliet/vim-twig'
 Plug 'honza/vim-snippets'
 call plug#end()
 
+let g:copilot_node_command = "~/.nvm/versions/node/v16.15.0/bin/node"
+
+set background=dark
+
 let g:nord_contrast = v:true
 let g:nord_borders = v:false
 let g:nord_disable_background = v:false
@@ -153,6 +157,16 @@ let g:lightline = {
         \ }
 
 let g:php_manual_online_search_shortcut   ='<leader>m'
+
+let g:php_cs_fixer_level = "symfony" 
+let g:php_cs_fixer_config = "default"
+let g:php_cs_fixer_rules = "@PSR12"
+let g:php_cs_fixer_allow_risky = "yes"      " options: --allow-risky
+
+let g:php_cs_fixer_php_path = "php"              
+let g:php_cs_fixer_enable_default_mapping = 1   
+let g:php_cs_fixer_dry_run = 0                 
+let g:php_cs_fixer_verbose = 0                    
 
 map <leader>w :ArgWrap<CR>
 
@@ -218,8 +232,8 @@ lua << EOF
 require'lspconfig'.phpactor.setup{
     on_attach = on_attach,
     init_options = {
-        ["language_server_phpstan.enabled"] = false,
-        ["language_server_psalm.enabled"] = true,
+       ["language_server_phpstan.enabled"] = true,
+       ["language_server_psalm.enabled"] = true,
     }
 }
 EOF
@@ -237,6 +251,7 @@ augroup templates
 augroup end
 
 nmap <Leader><Space> :PhpactorContextMenu<CR>
+nmap <Leader>I :PhpactorImportMissingClasses<CR>
 
 let g:ale_sign_error = '>'
 let g:ale_sign_warning = '-'
@@ -532,10 +547,12 @@ nnoremap <F5> :UndotreeToggle<CR>
 lua <<EOF
   require'nvim-treesitter.configs'.setup {
     -- Modules and its options go here
-    highlight = { enable = true },
+    highlight = { enable = true,
+        additional_vim_regex_highlighting = { "php" },
+    },
     incremental_selection = { enable = true },
     textobjects = { enable = true },
-    indent = { enable = true },
+    indent = { enable = false },
   }
 EOF
 
