@@ -1,5 +1,5 @@
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:$HOME/.config/nvim/plugins/phpactor/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:$HOME/.config/nvim/plugins/phpactor/bin:/usr/local/bin:$HOME/.config/composer/vendor/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -108,5 +108,10 @@ export PATH="$HOME/"'.platformsh/bin':"$PATH"
 if [ -f "$HOME/"'.platformsh/shell-config.rc' ]; then . "$HOME/"'.platformsh/shell-config.rc'; fi # END SNIPPET
 
 if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
-    tmux attach -t daily || tmux new -s daily
+    # tmux attach -t daily || tmux new -s daily
+    ~/bin/daily.sh
 fi
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
