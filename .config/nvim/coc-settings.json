@@ -12,6 +12,9 @@
             },
             "settings": {
                 "intelephense": {
+                    "environment": {
+                        "phpVersion": "8.1.12"
+                    },
                     "files": {
                         "maxSize": 1000000,
                         "associations": ["*.php"]
@@ -23,7 +26,10 @@
                         "maxItems": 15
                     },
                     "diagnostics": {
-                        "undefinedTypes": false
+                        "enable": false,
+                        "undefinedTypes": false,
+                        "undefinedFunctions": false,
+                        "undefinedSymbols": false
                     },
                     "format": {
                         "enable": true

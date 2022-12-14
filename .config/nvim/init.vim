@@ -115,7 +115,6 @@ Plug 'junegunn/vim-easy-align'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'itchyny/lightline.vim'
-"Plug 'shaunsingh/nord.nvim'
 Plug 'arcticicestudio/nord-vim'
 Plug 'alvan/vim-php-manual', {'for': 'php'}
 Plug 'StanAngeloff/php.vim', {'for': 'php'}
@@ -138,9 +137,15 @@ Plug 'simrat39/rust-tools.nvim'
 Plug 'neomake/neomake'
 Plug 'lumiliet/vim-twig'
 Plug 'honza/vim-snippets'
+Plug 'aperezdc/vim-template'
+Plug 'vim-test/vim-test'
 call plug#end()
 
 let g:copilot_node_command = "~/.nvm/versions/node/v16.15.0/bin/node"
+let g:copilot_filetypes = { '*': v:false, }
+
+let g:templates_no_builtin_templates = 1
+let g:templates_directory = "~/.config/nvim/templates"
 
 set background=dark
 
@@ -179,6 +184,12 @@ nnoremap <Leader>wo :match<CR>:nohlsearch<CR>
 map <Leader>rw :%s/\s\+$//<CR>
 
 tnoremap <Esc>  <C-\><C-n>
+
+nmap <silent> <leader>t :TestNearest<CR>
+nmap <silent> <leader>T :TestFile<CR>
+nmap <silent> <leader>a :TestSuite<CR>
+nmap <silent> <leader>l :TestLast<CR>
+nmap <silent> <leader>g :TestVisit<CR>
 
 " let g:fzf_action = {
   " \ 'ctrl-t': 'tab split',
@@ -242,13 +253,10 @@ autocmd FileType markdown let b:coc_pairs_disabled = ['`']
 autocmd FileType php set iskeyword+=$
 autocmd BufRead,BufNewFile * setlocal signcolumn=auto
 
-augroup templates
-    autocmd BufNewFile *.php silent! 0r ~/.config/nvim/templates/skeleton.php
-    autocmd BufNewFile *.php silent! :normal 5G
-    autocmd BufNewFile *.php silent! :normal $
-    autocmd BufNewFile *.js silent! 0r ~/.config/nvim/templates/skeleton.js
-    autocmd BufNewFile *.js silent! :normal 4G
-augroup end
+" augroup skeletons
+"   au!
+"   autocmd BufNewFile *.* silent! execute '0r ~/.config/nvim/templates/skeleton.'.expand("<afile>:e")
+" augroup END
 
 nmap <Leader><Space> :PhpactorContextMenu<CR>
 nmap <Leader>I :PhpactorImportMissingClasses<CR>
