@@ -190,12 +190,6 @@ map <Leader>rw :%s/\s\+$//<CR>
 
 tnoremap <Esc>  <C-\><C-n>
 
-nmap <silent> <leader>t :TestNearest<CR>
-nmap <silent> <leader>T :TestFile<CR>
-nmap <silent> <leader>a :TestSuite<CR>
-nmap <silent> <leader>l :TestLast<CR>
-nmap <silent> <leader>g :TestVisit<CR>
-
 " let g:fzf_action = {
   " \ 'ctrl-t': 'tab split',
   " \ 'ctrl-s': 'split',
@@ -571,3 +565,11 @@ EOF
 
 vmap <leader>_ <Plug>(coc-codeaction-selected)
 nmap <leader>_ <Plug>(coc-codeaction-selected)
+
+nmap <silent> <leader>t :TestNearest<CR>
+nmap <silent> <leader>T :TestFile<CR>
+"nmap <silent> <leader>a :TestSuite<CR>
+nmap <silent> <leader>l :TestLast<CR>
+nmap <silent> <leader>g :TestVisit<CR>
+
+let test#strategy = "neovim"
