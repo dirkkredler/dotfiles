@@ -104,7 +104,7 @@ nnoremap Y y$
 nnoremap n nzzzv
 nnoremap N Nzzzv
 nnoremap <silent> gx :execute 'silent! !xdg-open ' . shellescape(expand('<cWORD>'), 1)<CR>
-
+nnoremap <silent> go :execute 'silent! !google-chrome %'<CR>
 
 let mapleader   ="\<Space>"
 au VimLeave * set guicursor=a:hor20-blinkon1
@@ -115,7 +115,6 @@ Plug 'junegunn/vim-easy-align'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'itchyny/lightline.vim'
-"Plug 'shaunsingh/nord.nvim'
 Plug 'arcticicestudio/nord-vim'
 Plug 'alvan/vim-php-manual', {'for': 'php'}
 Plug 'StanAngeloff/php.vim', {'for': 'php'}
@@ -138,9 +137,19 @@ Plug 'simrat39/rust-tools.nvim'
 Plug 'neomake/neomake'
 Plug 'lumiliet/vim-twig'
 Plug 'honza/vim-snippets'
+Plug 'aperezdc/vim-template'
 call plug#end()
 
 let g:copilot_node_command = "~/.nvm/versions/node/v16.15.0/bin/node"
+" let g:copilot_filetypes = { '*': v:false, }
+let g:copilot_filetypes = {
+      \ 'xml': v:false,
+      \ 'text': v:false,
+      \ 'md': v:false,
+      \ }
+
+let g:templates_no_builtin_templates = 1
+let g:templates_directory = "~/.config/nvim/templates"
 
 set background=dark
 
@@ -242,13 +251,10 @@ autocmd FileType markdown let b:coc_pairs_disabled = ['`']
 autocmd FileType php set iskeyword+=$
 autocmd BufRead,BufNewFile * setlocal signcolumn=auto
 
-augroup templates
-    autocmd BufNewFile *.php silent! 0r ~/.config/nvim/templates/skeleton.php
-    autocmd BufNewFile *.php silent! :normal 5G
-    autocmd BufNewFile *.php silent! :normal $
-    autocmd BufNewFile *.js silent! 0r ~/.config/nvim/templates/skeleton.js
-    autocmd BufNewFile *.js silent! :normal 4G
-augroup end
+" augroup skeletons
+"   au!
+"   autocmd BufNewFile *.* silent! execute '0r ~/.config/nvim/templates/skeleton.'.expand("<afile>:e")
+" augroup END
 
 nmap <Leader><Space> :PhpactorContextMenu<CR>
 nmap <Leader>I :PhpactorImportMissingClasses<CR>
