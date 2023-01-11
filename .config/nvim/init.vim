@@ -138,6 +138,7 @@ Plug 'neomake/neomake'
 Plug 'lumiliet/vim-twig'
 Plug 'honza/vim-snippets'
 Plug 'aperezdc/vim-template'
+Plug 'vim-test/vim-test'
 call plug#end()
 
 let g:copilot_node_command = "~/.nvm/versions/node/v16.15.0/bin/node"
@@ -188,6 +189,12 @@ nnoremap <Leader>wo :match<CR>:nohlsearch<CR>
 map <Leader>rw :%s/\s\+$//<CR>
 
 tnoremap <Esc>  <C-\><C-n>
+
+nmap <silent> <leader>t :TestNearest<CR>
+nmap <silent> <leader>T :TestFile<CR>
+nmap <silent> <leader>a :TestSuite<CR>
+nmap <silent> <leader>l :TestLast<CR>
+nmap <silent> <leader>g :TestVisit<CR>
 
 " let g:fzf_action = {
   " \ 'ctrl-t': 'tab split',
