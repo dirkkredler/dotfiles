@@ -139,7 +139,12 @@ Plug 'lumiliet/vim-twig'
 Plug 'honza/vim-snippets'
 Plug 'aperezdc/vim-template'
 Plug 'vim-test/vim-test'
+Plug 'windwp/nvim-autopairs'
 call plug#end()
+
+lua << EOF
+require('nvim-autopairs').setup {}
+EOF
 
 let g:copilot_node_command = "~/.nvm/versions/node/v16.15.0/bin/node"
 " let g:copilot_filetypes = { '*': v:false, }
