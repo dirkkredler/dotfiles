@@ -1,5 +1,5 @@
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:$HOME/.config/nvim/plugins/phpactor/bin:/usr/local/bin:$HOME/.config/composer/vendor/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH:/usr/local/go/bin
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -38,7 +38,7 @@ ZSH_THEME="robbyrussell"
 # DISABLE_LS_COLORS="true"
 
 # Uncomment the following line to disable auto-setting terminal title.
-DISABLE_AUTO_TITLE="true"
+# DISABLE_AUTO_TITLE="true"
 
 # Uncomment the following line to enable command auto-correction.
 # ENABLE_CORRECTION="true"
@@ -52,7 +52,7 @@ DISABLE_AUTO_TITLE="true"
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
-DISABLE_UNTRACKED_FILES_DIRTY="true"
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
@@ -82,10 +82,11 @@ source $ZSH/oh-my-zsh.sh
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-export TERM='screen-256color'
-export EDITOR='nvim'
-alias vim="nvim"
-alias vi="nvim"
+# if [[ -n $SSH_CONNECTION ]]; then
+#   export EDITOR='vim'
+# else
+#   export EDITOR='mvim'
+# fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -98,29 +99,22 @@ alias vi="nvim"
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-
-export USER_ID=$(id -u)
-export GROUP_ID=$(id -g)
-
-# BEGIN SNIPPET: Platform.sh CLI configuration
-HOME=${HOME:-'/home/dirk'}
-export PATH="$HOME/"'.platformsh/bin':"$PATH"
-if [ -f "$HOME/"'.platformsh/shell-config.rc' ]; then . "$HOME/"'.platformsh/shell-config.rc'; fi # END SNIPPET
-
-if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
-    # tmux attach -t daily || tmux new -s daily
-    ~/bin/daily.sh
-fi
+alias cal="gcal"
 
 alias gitlog="git log --graph --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)' --all"
-
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/dirk/google-cloud-sdk/path.zsh.inc' ]; then . '/home/dirk/google-cloud-sdk/path.zsh.inc'; fi
+function zle-keymap-select zle-line-init zle-line-finish
+{
+  case $KEYMAP in
+      vicmd)      print -n '\033[1 q';; # block cursor
+      viins|main) print -n '\033[3 q';; # bar cursor
+  esac
+}
 
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/dirk/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/dirk/google-cloud-sdk/completion.zsh.inc'; fi
+zle -N zle-line-init
+zle -N zle-line-finish
+zle -N zle-keymap-select
