@@ -140,6 +140,9 @@ Plug 'honza/vim-snippets'
 Plug 'aperezdc/vim-template'
 Plug 'vim-test/vim-test'
 Plug 'windwp/nvim-autopairs'
+Plug 'yuezk/vim-js'
+Plug 'HerringtonDarkholme/yats.vim'
+Plug 'maxmellon/vim-jsx-pretty'
 call plug#end()
 
 lua << EOF
