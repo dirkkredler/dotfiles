@@ -143,10 +143,12 @@ Plug 'windwp/nvim-autopairs'
 Plug 'yuezk/vim-js'
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'maxmellon/vim-jsx-pretty'
+Plug 'lewis6991/gitsigns.nvim'
 call plug#end()
 
 lua << EOF
 require('nvim-autopairs').setup {}
+require('gitsigns').setup()
 EOF
 
 let g:copilot_node_command = "~/.nvm/versions/node/v16.15.0/bin/node"
